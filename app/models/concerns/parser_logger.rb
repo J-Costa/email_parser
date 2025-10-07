@@ -1,4 +1,4 @@
-module Logger
+module ParserLogger
   def log_failure(errors)
   end
 

@@ -1,5 +1,5 @@
 class EmailParser::Base
-  include Logger
+  include ParserLogger
 
   FROM_REGEX = /From:\s*(.*?)(\s|$)/i
   TO_REGEX = /To:\s*(.*?)(\s|$)/i
