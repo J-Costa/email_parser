@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_07_135521) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_07_151743) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -58,7 +58,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_07_135521) do
 
   create_table "logs", force: :cascade do |t|
     t.enum "status", default: "failure", null: false, enum_type: "log_status"
-    t.jsonb "errors", default: {}
+    t.jsonb "errors_info", default: {}
     t.jsonb "extracted_info", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
