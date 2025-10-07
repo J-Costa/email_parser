@@ -1,5 +1,4 @@
 module Logger
-
   def log_failure(errors)
   end
 
