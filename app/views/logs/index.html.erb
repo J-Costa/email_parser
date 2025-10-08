@@ -12,7 +12,7 @@
     <tbody>
       <% @logs.each do |log| %>
         <tr>
-            <th scope="row"><%= log.id %></th>
+            <th scope="row"><%= link_to log.id, log_path(log) %></th>
             <td>
             <span data-bs-toggle="tooltip" title="<%= log.extracted_info.to_json %>">
               <%= truncate(log.extracted_info.to_json, length: 50) %>
@@ -23,7 +23,7 @@
               <%= truncate(log.errors_info.to_json, length: 50) %>
             </span>
             </td>
-          <td><%= log.status %></td>
+          <td> <span class="badge text-bg-<%= log.success? ? 'success' : (log.failure? ? 'danger' : 'secondary') %>"><%= log.status %></span></td>
           <td><%= log.created_at %></td>
         </tr>
       <% end %>

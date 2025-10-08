@@ -1,0 +1,57 @@
+<%# ...existing code... %>
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Log #<%= @log.id %></h1>
+    <div>
+      <%= link_to "Voltar", logs_path, class: "btn btn-outline-secondary btn-sm" %>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-header fw-semibold">Resumo</div>
+        <div class="card-body small">
+          <p class="mb-1"><strong>Status:</strong>
+            <span class="badge text-bg-<%= @log.success? ? 'success' : (@log.failure? ? 'danger' : 'secondary') %>">
+              <%= @log.status %>
+            </span>
+          </p>
+          <p class="mb-1"><strong>Criado:</strong> <%= l(@log.created_at, format: :short) %></p>
+          <p class="mb-1"><strong>Atualizado:</strong> <%= l(@log.updated_at, format: :short) %></p>
+          <% if @log.eml_file.attached? %>
+            <p class="mt-2 mb-0">
+              <strong>Arquivo:</strong>
+              <%= link_to @log.eml_file.filename.to_s, rails_blob_path(@log.eml_file, disposition: "attachment"), class: "link-primary" %>
+              (<%= number_to_human_size(@log.eml_file.byte_size) %>)
+            </p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8 d-flex flex-column gap-3">
+      <div class="card">
+        <div class="card-header fw-semibold">Dados Extraídos</div>
+        <div class="card-body p-0">
+          <% if @log.extracted_info.present? %>
+            <pre class="mb-0 px-4 py-2 small"><%= JSON.pretty_generate(@log.extracted_info) %></pre>
+          <% else %>
+            <div class="p-3 text-muted small">Nenhum dado extraído.</div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header fw-semibold">Erros</div>
+        <div class="card-body p-0">
+          <% if @log.errors_info.present? %>
+            <pre class="mb-0 px-4 py-2 small"><%= JSON.pretty_generate(@log.errors_info) %></pre>
+          <% else %>
+            <div class="p-3 text-muted small">Sem erros.</div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

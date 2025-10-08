@@ -16,6 +16,6 @@ Rails.application.routes.draw do
   root "processor#new"
 
   resources :customers, only: [ :index ]
-  resources :logs, only: [ :index ]
+  resources :logs, only: [ :index, :show ]
   resources :processor, only: [ :new, :create ]
 end

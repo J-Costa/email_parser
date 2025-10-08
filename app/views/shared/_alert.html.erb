@@ -1,0 +1,16 @@
+<% flash.each do |type, message| %>
+  <% next if message.blank? %>
+  <% bootstrap_type =
+      case type.to_sym
+      when :notice, :success then "success"
+      when :alert, :error, :danger then "danger"
+      when :warning then "warning"
+      when :info then "info"
+      else "secondary"
+      end %>
+  <% Array(message).each do |msg| %>
+    <div class="alert alert-<%= bootstrap_type %> alert-dismissible fade show py-2 mb-2 small" role="alert">
+      <%= msg %>
+    </div>
+  <% end %>
+<% end %>

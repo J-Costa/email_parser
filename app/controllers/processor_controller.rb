@@ -2,7 +2,13 @@ class ProcessorController < ApplicationController
   def new; end
 
   def create
-    log_ids = files_params.compact_blank!.map do |file|
+    files = files_params.compact_blank!
+    if files.blank?
+      flash[:alert] = "Por favor, envie pelo menos um arquivo .eml."
+      return redirect_to new_processor_path
+    end
+
+    log_ids = files.map do |file|
         log = Log.create!(status: :pending)
         log.eml_file.attach(file)
         log.id
