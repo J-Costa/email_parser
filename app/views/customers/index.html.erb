@@ -1,0 +1,24 @@
+<div class="container accordion p-4">
+  <table class="table mt-4 p-4">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">Telefone</th>
+        <th scope="col">Código do produto</th>
+        <th scope="col">Assunto do E-mail</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @customers.each do |customer| %>
+        <tr>
+          <th scope="row"><%= customer.id %></th>
+          <td><%= customer.email %></td>
+          <td><%= customer.phone %></td>
+          <td><%= customer.product_code %></td>
+          <td><%= customer.email_subject %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

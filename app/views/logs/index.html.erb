@@ -1,0 +1,32 @@
+<div class="container accordion p-4">
+  <table class="table mt-4 p-4">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Informações</th>
+        <th scope="col">Erros</th>
+        <th scope="col">Status</th>
+        <th scope="col">Criado em</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @logs.each do |log| %>
+        <tr>
+            <th scope="row"><%= log.id %></th>
+            <td>
+            <span data-bs-toggle="tooltip" title="<%= log.extracted_info.to_json %>">
+              <%= truncate(log.extracted_info.to_json, length: 50) %>
+            </span>
+            </td>
+            <td>
+            <span data-bs-toggle="tooltip" title="<%= log.errors_info.to_json %>">
+              <%= truncate(log.errors_info.to_json, length: 50) %>
+            </span>
+            </td>
+          <td><%= log.status %></td>
+          <td><%= log.created_at %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
