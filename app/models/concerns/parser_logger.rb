@@ -1,15 +1,23 @@
 module ParserLogger
   def log_failure(log_params)
-    log = Log.create(formatted_params(log_params))
-    log.eml_file.attach(file_params(@raw_email)) if @raw_email
+    persist_log(log_params, success: false)
   end
 
   def log_success(log_params)
-    log = Log.create(formatted_params(log_params))
-    log.eml_file.attach(file_params(@raw_email)) if @raw_email
+    persist_log(log_params, success: true)
   end
 
   private
+
+  def persist_log(log_params, success:)
+    attrs = formatted_params(log_params)
+    if @log
+      @log.update!(attrs)
+    else
+      log = Log.create!(attrs)
+      log.eml_file.attach(file_params(@raw_email))
+    end
+  end
 
   def formatted_params(log_params)
     {

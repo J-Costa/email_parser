@@ -4,11 +4,11 @@ class EmailParser::Processor
     "parceiro" => EmailParser::Partner
   }
 
-  def self.process(raw_email)
+  def self.process(raw_email, log: nil)
     from_email = EmailParser::Base.from_email(raw_email)&.downcase
     parser_class = PARSERS_MAP.find { |key, klass| from_email&.include?(key) }&.last
 
-    parser = parser_class.new(raw_email)
+    parser = parser_class.new(raw_email, log: log)
     parser.parse
   end
 end
