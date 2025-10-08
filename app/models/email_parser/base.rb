@@ -14,7 +14,7 @@ class EmailParser::Base
   attr_reader :raw_email, :errors, :success
 
   def initialize(raw_email)
-    @raw_email = raw_email
+    @raw_email = raw_email.force_encoding("UTF-8").encode("UTF-8", invalid: :replace, undef: :replace, replace: "")
     @errors = []
     @success = false
   end

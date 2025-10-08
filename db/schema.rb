@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_07_151743) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_08_154525) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
-  create_enum "log_status", ["success", "failure"]
+  create_enum "log_status", ["success", "failure", "pending"]
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -57,7 +57,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_07_151743) do
   end
 
   create_table "logs", force: :cascade do |t|
-    t.enum "status", default: "failure", null: false, enum_type: "log_status"
+    t.enum "status", default: "pending", null: false, enum_type: "log_status"
     t.jsonb "errors_info", default: {}
     t.jsonb "extracted_info", default: {}
     t.datetime "created_at", null: false
