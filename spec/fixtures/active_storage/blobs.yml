@@ -1,0 +1,2 @@
+valid_email_file: <%= ActiveStorage::FixtureSet.blob filename: "email1.eml", content_type: "message/rfc822" %>
+invalid_email_file: <%= ActiveStorage::FixtureSet.blob filename: "email3.eml", content_type: "message/rfc822" %>

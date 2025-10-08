@@ -1,4 +1,4 @@
-class ProcessorController < ApplicationController
+class ProcessorsController < ApplicationController
   def new; end
 
   def create

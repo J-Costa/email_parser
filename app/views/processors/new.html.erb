@@ -1,6 +1,6 @@
 <div class="container accordion p-4">
   <h1>Processar Emails</h1>
-  <%= form_with url: processor_index_path, local: true, multipart: true do |form| %>
+  <%= form_with url: processor_path, local: true, multipart: true do |form| %>
     <div class="mb-3">
       <%= form.label :files, "Selecione um ou vários arquivos (.eml):", class: "form-label" %>
       <%= form.file_field :files, multiple: true, name: "files[]", class: "form-control", accept: ".eml" %>
