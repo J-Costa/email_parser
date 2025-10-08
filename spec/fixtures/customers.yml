@@ -1,0 +1,6 @@
+valid:
+  name: "John Doe"
+  email: "john.doe@example.com"
+  phone: "11987654321"
+  product_code: "PROD123"
+  email_subject: "Inquiry about product PROD123"

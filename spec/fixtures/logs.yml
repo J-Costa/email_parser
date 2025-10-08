@@ -1,0 +1,28 @@
+success:
+  extracted_info:
+    name: John Doe
+    email: john.doe@example.com
+    phone: "11987654321"
+    product_code: PROD123
+    email_subject: Inquiry about product PROD123
+  errors_info: {}
+  status: success
+
+failure:
+  extracted_info:
+    name: John Doe
+    email:
+    phone: "11987654321"
+    product_code: PROD123
+    email_subject: Inquiry about product PROD123
+  errors_info:
+    errors:
+      - Email is missing
+    backtrace: null
+    exception: null
+  status: failure
+
+pending:
+  extracted_info: {}
+  errors_info: {}
+  status: pending

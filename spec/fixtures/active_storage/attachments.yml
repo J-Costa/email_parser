@@ -1,0 +1,9 @@
+success_eml_file_attachment:
+  name: eml_file
+  record: success (Log)
+  blob: valid_email_file
+
+failure_eml_file_attachment:
+  name: eml_file
+  record: failure (Log)
+  blob: invalid_email_file
