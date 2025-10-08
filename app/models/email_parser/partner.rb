@@ -1,5 +1,6 @@
 class EmailParser::Partner < EmailParser::Base
   def parse
+    set_fields
     validate_fields
 
     return log_failure(log_params) unless @success

@@ -5,7 +5,7 @@ class EmailParser::Processor
   }
 
   def self.process(raw_email, log: nil)
-    from_email = EmailParser::Base.from_email(raw_email)&.downcase
+    from_email = EmailParser::Base.extract_from_email(raw_email)&.downcase
     parser_class = PARSERS_MAP.find { |key, klass| from_email&.include?(key) }&.last
 
     parser = parser_class.new(raw_email, log: log)

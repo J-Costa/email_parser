@@ -13,6 +13,12 @@ class EmailParser::Base
 
   attr_reader :raw_email, :errors, :success
 
+  class << self
+    def extract_from_email(raw_email)
+      raw_email.match(FROM_REGEX)&.[](1)
+    end
+  end
+
   def initialize(raw_email, log: nil)
     @raw_email = raw_email.force_encoding("UTF-8").encode("UTF-8", invalid: :replace, undef: :replace, replace: "")
     @log = log
@@ -20,16 +26,18 @@ class EmailParser::Base
     @success = false
   end
 
-  def validate
-    raise NotImplementedError, "#{self.class.name} must implement the #{__method__} method"
-  end
-
   def parse
     raise NotImplementedError, "#{self.class.name} must implement the #{__method__} method"
   end
 
-  def self.from_email(raw_email)
-    raw_email.match(FROM_REGEX)&.[](1)
+  private
+
+  def set_fields
+    @name = extract_name
+    @email = extract_email
+    @phone = extract_phone
+    @subject = extract_subject
+    @product_code = extract_product_code
   end
 
   def extract_name
@@ -41,7 +49,8 @@ class EmailParser::Base
   end
 
   def extract_phone
-    extract_field(PHONE_REGEX)
+    raw_phone = extract_field(PHONE_REGEX)
+    raw_phone&.gsub!(/\D+/, "")&.strip
   end
 
   def extract_subject
@@ -52,16 +61,12 @@ class EmailParser::Base
     extract_field(PRODUCT_CODE_LABEL_REGEX) || extract_field(PRODUCT_CODE_INLINE_REGEX)
   end
 
-  private
+  def extract_field(regex)
+    match = @raw_email.match(regex)
+    match ? match[1].strip : nil
+  end
 
   def validate_fields
-    @name = extract_name
-    @email = extract_email
-    @raw_phone = extract_phone
-    @phone = @raw_phone&.gsub(/\D/, "")
-    @subject = extract_subject
-    @product_code = extract_product_code
-
     @errors << "Subject is missing" if @subject.nil?
     @errors << "Name is missing" if @name.nil?
     @errors << "Email is missing" if @email.nil?
@@ -69,11 +74,6 @@ class EmailParser::Base
     @errors << "Product code is missing" if @product_code.nil?
 
     @success = @errors.empty?
-  end
-
-  def extract_field(regex)
-    match = @raw_email.match(regex)
-    match ? match[1].strip : nil
   end
 
   def customer_params
