@@ -98,3 +98,22 @@ Após rodar os testes, você poderá visulizar a cobertura de testes em `coverag
 - Rotas: [`config/routes.rb`](config/routes.rb)
 - Inicialização e server: [`config/puma.rb`](config/puma.rb), [`config.ru`](config.ru)
 
+## Integração Contínua (CI)
+
+O pipeline de CI roda via GitHub Actions: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
+
+- Gatilhos:
+  - ao abrir um pull_request
+  - ao dar um push no branch main
+- Jobs:
+  - scan_ruby: análise estática de segurança com Brakeman
+    - Comandos: `bin/brakeman --no-pager`
+  - scan_js: auditoria de dependências JS do Importmap
+    - Comandos: `bin/importmap audit`
+  - lint: lint de Ruby com RuboCop (formato de saída GitHub)
+    - Comandos: `bin/rubocop -f github`
+  - test: prepara banco de testes e roda RSpec
+    - Services: Postgres (POSTGRES_USER=postgres, POSTGRES_PASSWORD=postgres)
+    - Env: RAILS_ENV=test, DATABASE_URL=postgres://postgres:postgres@localhost:5432
+    - Comandos: `bin/rails db:test:prepare && bundle exec rspec`
+
