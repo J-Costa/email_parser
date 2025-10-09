@@ -8,13 +8,12 @@ Aplicação com Ruby 3.4.3 e Rails 8.0.3 para processar e extrair dados de arqui
   - Clientes: [`CustomersController`](app/controllers/customers_controller.rb) em `/customers`
   - Logs: [`LogsController`](app/controllers/logs_controller.rb) em `/logs`
   - Sidekiq Web UI: `/sidekiq` (montado em [`config/routes.rb`](config/routes.rb))
-- Model: [`Customer`](app/models/customer.rb), [`Log`](app/models/log.rb)
+- Models: [`Customer`](app/models/customer.rb), [`Log`](app/models/log.rb)
 - Adapter de Jobs em dev: Sidekiq (ver [`config/environments/development.rb`](config/environments/development.rb))
 
 ## Requisitos
 
 - Docker e Docker Compose
-- (Opcional) VS Code + Dev Containers
 
 ## Passos para rodar o projeto (via Docker)
 O Docker compose está configurado para expor as portas 5432 (PostgreSQL) e 6379 (Redis).
@@ -28,20 +27,28 @@ docker compose build
 
 2) Subir dependências (Postgres e Redis), irá rodar em background
 ```sh
-docker compose up -d 
+docker compose up -d
 ```
 
-4) Instalar dependências
+#### Executando o script
+Com esse comando você já instala dependências, prepara o banco e sobe os serviços web, sidekiq e redis
+
+```sh
+bin/setup
+```
+
+#### Ou então executando passo a passo
+3) Instalar dependências
 ```sh
 bundle install
 ```
 
-5) Preparar o banco
+4) Preparar o banco
 ```sh
 bin/rails db:setup
 ```
 
-6) Subir serviços web, sidekiq e redis
+5) Subir serviços web, sidekiq e redis
 ```sh
 bin/dev
 ```
@@ -73,21 +80,6 @@ URLs:
 
 A criação/atualização de logs é feita pelos componentes de parsing com o concern [`ParserLogger`](app/models/concerns/parser_logger.rb).
 
-## Rodar via Dev Containers (VS Code)
-
-Pré-requisito: extensão “Dev Containers” instalada.
-
-Passos:
-1. Abra o projeto no VS Code
-2. Pressione F1 e rode “Dev Containers: Reopen in Container”
-3. No terminal da devcontainer:
-   - `docker compose up -d db redis`
-   - `bin/rails db:prepare`
-   - Em um terminal: `bin/dev` (ou `bin/rails server`)
-   - Em outro terminal: `bundle exec sidekiq`
-4. Acesse http://localhost:3000
-
-Observação: se seus serviços no `docker-compose.yml` tiverem nomes diferentes de `web`, `sidekiq`, `db`, `redis`, ajuste os comandos acima.
 
 ## Testes
 
