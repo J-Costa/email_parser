@@ -11,7 +11,13 @@ class EmailParser::Base
   PRODUCT_CODE_LABEL_REGEX = /^(?:Produto(?:\s+de\s+interesse)?|Código\s+do\s+produto)\s*:\s*([A-Z]{2,}(?:-?\d{3,}))$/i
   PRODUCT_CODE_INLINE_REGEX = /\bproduto(?:\s+de\s+c[óo]digo)?\s+([A-Z]{2,}(?:-?\d{3,}))\b/iu
 
-  attr_reader :raw_email, :errors, :success
+  class << self
+    def extract_from_email_address(raw_email)
+      raw_email.match(FROM_REGEX)&.captures&.first&.strip
+    end
+  end
+
+  attr_reader :raw_email, :log, :errors, :success
 
   def initialize(raw_email, log: nil)
     @raw_email = raw_email.force_encoding("UTF-8").encode("UTF-8", invalid: :replace, undef: :replace, replace: "")
@@ -20,16 +26,34 @@ class EmailParser::Base
     @success = false
   end
 
-  def validate
-    raise NotImplementedError, "#{self.class.name} must implement the #{__method__} method"
-  end
-
   def parse
-    raise NotImplementedError, "#{self.class.name} must implement the #{__method__} method"
+    set_fields
+    validate_fields
+
+    return log_failure(log_params) unless @success
+
+    customer = Customer.new(customer_params)
+    if customer.save
+      log_success(log_params)
+    else
+      @errors << "Failed to create customer record"
+      @errors << customer.errors.full_messages
+      @success = false
+      log_failure(log_params)
+    end
+  rescue => e
+    @errors << "Exception occurred: #{e.message}"
+    log_failure(log_params(e))
   end
 
-  def self.from_email(raw_email)
-    raw_email.match(FROM_REGEX)&.[](1)
+  private
+
+  def set_fields
+    @name = extract_name
+    @email = extract_email
+    @phone = extract_phone
+    @subject = extract_subject
+    @product_code = extract_product_code
   end
 
   def extract_name
@@ -41,7 +65,8 @@ class EmailParser::Base
   end
 
   def extract_phone
-    extract_field(PHONE_REGEX)
+    raw_phone = extract_field(PHONE_REGEX)
+    raw_phone&.gsub(/\D/, "")
   end
 
   def extract_subject
@@ -52,16 +77,11 @@ class EmailParser::Base
     extract_field(PRODUCT_CODE_LABEL_REGEX) || extract_field(PRODUCT_CODE_INLINE_REGEX)
   end
 
-  private
+  def extract_field(regex)
+    @raw_email.match(regex)&.captures&.first&.strip
+  end
 
   def validate_fields
-    @name = extract_name
-    @email = extract_email
-    @raw_phone = extract_phone
-    @phone = @raw_phone&.gsub(/\D/, "")
-    @subject = extract_subject
-    @product_code = extract_product_code
-
     @errors << "Subject is missing" if @subject.nil?
     @errors << "Name is missing" if @name.nil?
     @errors << "Email is missing" if @email.nil?
@@ -69,11 +89,6 @@ class EmailParser::Base
     @errors << "Product code is missing" if @product_code.nil?
 
     @success = @errors.empty?
-  end
-
-  def extract_field(regex)
-    match = @raw_email.match(regex)
-    match ? match[1].strip : nil
   end
 
   def customer_params

@@ -1,4 +1,6 @@
 module ParserLogger
+  extend ActiveSupport::Concern
+
   def log_failure(log_params)
     persist_log(log_params, success: false)
   end
@@ -10,7 +12,7 @@ module ParserLogger
   private
 
   def persist_log(log_params, success:)
-    attrs = formatted_params(log_params)
+    attrs = formatted_params(log_params).merge(status: status_parser(success))
     if @log
       @log.update!(attrs)
     else
@@ -23,7 +25,7 @@ module ParserLogger
     {
       extracted_info: log_params[:customer_params],
       errors_info: log_params[:errors_info],
-      status: log_params[:success] ? Log.statuses[:success] : Log.statuses[:failure]
+      status: status_parser(log_params[:success])
     }
   end
 
@@ -34,5 +36,9 @@ module ParserLogger
       filename: "email_#{timestamp}.eml",
       content_type: "message/rfc822"
     }
+  end
+
+  def status_parser(status)
+    status ? Log.statuses[:success] : Log.statuses[:failure]
   end
 end

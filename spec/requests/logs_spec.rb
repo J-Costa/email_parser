@@ -22,4 +22,13 @@ RSpec.describe "Logs", type: :request do
       expect(response).to have_http_status(:success)
     end
   end
+
+  context "get log" do
+    it "returns http success" do
+      log = logs(:success)
+      get log_path(log)
+
+      expect(response).to have_http_status(:success)
+    end
+  end
 end
